@@ -1,23 +1,24 @@
+/** @format */
+
 import { useState } from "react";
 import { SearchForm } from "../features/ProductSearch/components/SearchForm";
 import { ResultsTable } from "../features/ProductSearch/components/ResultsTable";
 import { useProductSearch } from "../hooks/useProductSearch";
 import { useStrictFilter } from "../hooks/useStrictFilter";
 import { useSort } from "../hooks/useSort";
-import { Product } from "@/types/Product"; // Asegúrate de importar este tipo
+import { Product } from "@/types/Product";
 
 const HomePage: React.FC = () => {
   const { products, loading, error, searchProducts } = useProductSearch();
   const [searchTerm, setSearchTerm] = useState<string>("");
 
+  const { sortedProducts, sortProducts, sortOrder, sortParameter } = useSort<Product>(products, "price");
+
   const {
     filteredProducts,
     loading: filterLoading,
     setStrictFilter,
-  } = useStrictFilter(products, searchTerm);
-
-  const { sortedProducts, sortProducts, sortOrder, sortParameter } =
-    useSort<Product>(filteredProducts, "price");
+  } = useStrictFilter(sortedProducts, searchTerm);
 
   const handleSearch = async (
     product: string,
@@ -30,8 +31,6 @@ const HomePage: React.FC = () => {
 
   const handleStrictFilterChange = (isStrict: boolean) => {
     setStrictFilter(isStrict);
-    // Mantener el orden actual en los productos filtrados
-    sortProducts(sortParameter);
   };
 
   return (
@@ -44,7 +43,7 @@ const HomePage: React.FC = () => {
       {(loading || filterLoading) && <p>Cargando...</p>}
       {error && <p>{error}</p>}
       <ResultsTable
-        products={sortedProducts}
+        products={filteredProducts}
         sortProducts={sortProducts}
         sortOrder={sortOrder}
         sortParameter={sortParameter}

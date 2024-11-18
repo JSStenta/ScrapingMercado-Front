@@ -22,7 +22,7 @@ export const ResultsTable: React.FC<ResultsTableProps> = ({
     return "";
   };
 
-  if (products.length>0) {// Cambiar por condición de si hay productos
+  if (products.length>0) {
     return (
       <table>
         <caption>Cantidad de productos encontrados: {products.length}</caption>
@@ -55,7 +55,9 @@ export const ResultsTable: React.FC<ResultsTableProps> = ({
               <td>{product.title}</td>
               <td>{product.price}</td>
               <td>
-                {product.unit ? `${product.unit[0]}: ${product.unit[1]}` : "N/A"}
+                {product.unit
+                  ? `${product.unit[0]}: ${product.unit[1]}`
+                  : "N/A"}
               </td>
               <td>
                 <img src={product.image} alt={product.title} />
