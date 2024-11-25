@@ -1,5 +1,5 @@
 // src/features/ProductSearch/components/ProductSearchInput.tsx
-import React from "react";
+import React, { useEffect } from "react";
 
 interface ProductSearchInputProps {
   product: string;

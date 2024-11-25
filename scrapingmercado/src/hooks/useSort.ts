@@ -18,24 +18,13 @@ export const useSort = <product extends Product>(
         setSortOrder(newSortOrder);
 
         const sorted = [...products].sort((a, b) => {
-            if (a[parameter] === undefined || b[parameter] === undefined) {
-                if (a['price'] < b['price']) return newSortOrder ? -1 : 1;
-                if (a['price'] > b['price']) return newSortOrder ? 1 : -1;
-            } else {
+            const aParam = (a[parameter] ?? a.discountPrice);
+            const bParam = (b[parameter] ?? b.discountPrice);
 
-                if (parameter == 'unit') {
-                    if (a.unit === undefined || a.unit[1] === null) return 1;
-                    if (b.unit === undefined || b.unit[1] === null) return -1;
-                    if (a.unit[1] > b.unit[1]) {
-                        return newSortOrder ? 1 : -1;
-                    } else if (a.unit[1] < b.unit[1]) {
-                        return newSortOrder ? -1 : 1;
-                    }
-                }
-                if (a[parameter] < b[parameter]) return newSortOrder ? -1 : 1;
-                if (a[parameter] > b[parameter]) return newSortOrder ? 1 : -1;
-            }
-            return 0;
+            if (!a[parameter]) return 1;
+            if (!b[parameter]) return -1;
+
+            return (newSortOrder ? (aParam < bParam) ? -1 : 1 : (aParam < bParam) ? 1 : -1);
         });
         setSortedProducts(sorted);
         setLoading(false);

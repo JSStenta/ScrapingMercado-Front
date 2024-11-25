@@ -1,3 +1,5 @@
+/** @format */
+
 // src/features/ProductSearch/components/ResultsTable.tsx
 import React from "react";
 import { Product } from "@/types/Product";
@@ -13,7 +15,7 @@ export const ResultsTable: React.FC<ResultsTableProps> = ({
   products,
   sortProducts,
   sortOrder,
-  sortParameter = 'price',
+  sortParameter,
 }) => {
   const getSortIcon = (column: string) => {
     if (sortParameter === column) {
@@ -22,9 +24,9 @@ export const ResultsTable: React.FC<ResultsTableProps> = ({
     return "";
   };
 
-  if (products.length>0) {
+  if (products.length > 0) {
     return (
-      <table>
+      <table style={{ border: "1px solid black" }}>
         <caption>Cantidad de productos encontrados: {products.length}</caption>
         <thead>
           <tr>
@@ -34,11 +36,11 @@ export const ResultsTable: React.FC<ResultsTableProps> = ({
             <th onClick={() => sortProducts("title")}>
               Producto {getSortIcon("title")}
             </th>
-            <th onClick={() => sortProducts("price")}>
-              Precio {getSortIcon("price")}
+            <th onClick={() => sortProducts("discountPrice")}>
+              Precio {getSortIcon("discountPrice")}
             </th>
-            <th onClick={() => sortProducts("unit")}>
-              Precio neto {getSortIcon("unit")}
+            <th onClick={() => sortProducts("discountPriceUnit")}>
+              Precio neto {getSortIcon("discountPriceUnit")}
             </th>
             <th>Imagen</th>
             <th>Enlace</th>
@@ -53,11 +55,23 @@ export const ResultsTable: React.FC<ResultsTableProps> = ({
                 </a>
               </td>
               <td>{product.title}</td>
-              <td>{product.price}</td>
               <td>
-                {product.unit
-                  ? `${product.unit[0]}: ${product.unit[1]}`
-                  : "N/A"}
+                {product.discountPrice !== product.price ? (
+                  <s>${product.price}</s>
+                ) : (
+                  ""
+                )}
+                ${product.discountPrice?.toFixed(2)}
+              </td>
+              <td>
+                {product.unit ? `${product.unit[0]}: ` : "N/A"}
+                {product.unit?.[1] &&
+                product.unit[1] !== product.discountPriceUnit ? (
+                  <s>${product.unit[1]}</s>
+                ) : (
+                  ""
+                )}
+                ${product.discountPriceUnit?.toFixed(2)}
               </td>
               <td>
                 <img src={product.image} alt={product.title} />

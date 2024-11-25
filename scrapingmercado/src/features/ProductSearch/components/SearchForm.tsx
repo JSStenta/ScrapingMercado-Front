@@ -1,3 +1,4 @@
+/** @format */
 // src/features/ProductSearch/components/SearchForm.tsx
 import React, { useState } from "react";
 import { Supermarket } from "@/types/Supermarket";
@@ -9,15 +10,28 @@ import StrictFilterCheckbox from "./StrictFilterCheckbox";
 interface SearchFormProps {
   onSearch: (product: string, supermarkets: string[]) => Promise<any[]>;
   onToggleStrictFilter: (strict: boolean) => void;
+  onUpdateDiscount: (supermarket: Supermarket, discount: number) => void;
+  onSearchTermChange: (term: string) => void;
+  isLoading: boolean;
 }
 
 export const SearchForm: React.FC<SearchFormProps> = ({
   onSearch,
   onToggleStrictFilter,
+  onUpdateDiscount,
+  onSearchTermChange,
+  isLoading,
 }) => {
   const [product, setProduct] = useState<string>("");
-  const [selectedSupermarkets, setSelectedSupermarkets] = useState<Map<Supermarket, boolean>>(new Map(supermarkets.map((supermarket) => [supermarket, false])));
-  const [isStrict, setIsStrict] = useState<boolean>(false);
+  const [selectedSupermarkets, setSelectedSupermarkets] = useState<
+    Map<Supermarket, boolean>
+  >(new Map(supermarkets.map((supermarket) => [supermarket, false])));
+  const [isStrict, setIsStrict] = useState<boolean>(true);
+
+  const handleDiscountChange = (supermarket: Supermarket, value: string) => {
+    const discount = parseFloat(value) || 0;
+    onUpdateDiscount(supermarket, discount);
+  };
 
   const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
@@ -25,6 +39,11 @@ export const SearchForm: React.FC<SearchFormProps> = ({
       .filter((key) => selectedSupermarkets.get(key))
       .map((supermarket) => supermarket.value);
     await onSearch(product, selectedSupermarketValues);
+  };
+
+  const handleProductChange = (term: string) => {
+    setProduct(term);
+    onSearchTermChange(term);
   };
 
   const handleSupermarketChange = (
@@ -40,8 +59,24 @@ export const SearchForm: React.FC<SearchFormProps> = ({
 
   return (
     <form onSubmit={handleSubmit}>
-      <ProductSearchInput product={product} onProductChange={setProduct} />
-      <div>
+      <fieldset>
+        <ProductSearchInput
+          product={product}
+          onProductChange={handleProductChange}
+        />
+        <button type="submit" disabled={isLoading}>
+          {isLoading ? "Buscando..." : "Buscar"}
+        </button>
+        <StrictFilterCheckbox
+          isStrict={isStrict}
+          onToggleStrictFilter={(checked) => {
+            setIsStrict(checked);
+            onToggleStrictFilter(checked);
+          }}
+        />
+      </fieldset>
+
+      <fieldset>
         {supermarkets.map((supermarket) => (
           <SupermarketCheckbox
             key={supermarket.value}
@@ -50,15 +85,30 @@ export const SearchForm: React.FC<SearchFormProps> = ({
             onChange={handleSupermarketChange}
           />
         ))}
-      </div>
-      <StrictFilterCheckbox
-        isStrict={isStrict}
-        onToggleStrictFilter={(checked) => {
-          setIsStrict(checked);
-          onToggleStrictFilter(checked);
-        }}
-      />
-      <button type="submit">Buscar</button>
+      </fieldset>
+      <fieldset>
+        {Array.from(selectedSupermarkets.entries()).filter(
+          ([_, isSelected]) => isSelected
+        ).length > 0
+          ? "Procentaje de descuento:"
+          : ""}
+        {Array.from(selectedSupermarkets.entries())
+          .filter(([_, isSelected]) => isSelected)
+          .map(([supermarket]) => (
+            <div key={supermarket.name}>
+              {supermarket.name}:
+              <input
+                type="number"
+                min="0"
+                max="99"
+                step="1"
+                onChange={(e) =>
+                  handleDiscountChange(supermarket, e.target.value)
+                }
+              />
+            </div>
+          ))}
+      </fieldset>
     </form>
   );
 };

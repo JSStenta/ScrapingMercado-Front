@@ -1,7 +1,7 @@
 // src/hooks/useStrictFilter.ts
 import { useState, useEffect } from 'react';
 import { Product } from '@/types/Product';
-import { normalizeText } from '@/utils/normalizeText';
+import { normalizeText } from '@/utils/normalizers';
 
 /**
  * Custom hook to filter products based on a search term with an optional strict filter.
