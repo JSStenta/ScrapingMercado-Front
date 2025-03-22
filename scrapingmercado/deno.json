@@ -1,0 +1,22 @@
+{
+	"tasks": {
+		"dev": "next dev",
+		"build": "next build",
+		"start": "next start",
+		"lint": "next lint"
+	},
+	"nodeModulesDir": "auto",
+  "lock": "deno.lock",
+  "compilerOptions": {
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "strict": true,
+    "jsx": "preserve"
+  },
+  "unstable": [
+    "sloppy-imports"
+  ]
+}

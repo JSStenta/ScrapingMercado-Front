@@ -1,0 +1,2 @@
+cd .\scrapingmercado\
+deno task dev

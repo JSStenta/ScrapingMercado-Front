@@ -40,7 +40,7 @@ export const ResultsTable: React.FC<ResultsTableProps> = ({
               Precio {getSortIcon("discountPrice")}
             </th>
             <th onClick={() => sortProducts("discountPriceUnit")}>
-              Precio neto {getSortIcon("discountPriceUnit")}
+              Precio por cantidad {getSortIcon("discountPriceUnit")}
             </th>
             <th>Imagen</th>
             <th>Enlace</th>
@@ -74,7 +74,7 @@ export const ResultsTable: React.FC<ResultsTableProps> = ({
                 ${product.discountPriceUnit?.toFixed(2)}
               </td>
               <td>
-                <img src={product.image} alt={product.title} />
+                <img src={product.image} alt={product.title} height={100}/>
               </td>
               <td>
                 <a href={product.link} target="_blank">
