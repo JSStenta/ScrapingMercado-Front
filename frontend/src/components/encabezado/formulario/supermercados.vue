@@ -1,0 +1,21 @@
+<!-- @prettier -->
+<template>
+	<label v-for="supermercado in supermercados" :key="supermercado.valor">
+		<input
+			type="checkbox"
+			:value="supermercado.valor"
+			v-model="supermercadosSeleccionados"
+			@change="enviarSeleccion"
+		/>
+		<span >{{ supermercado.nombre }}</span>
+	</label>
+</template>
+<script setup>
+	import supermercados from "@/data/supermercados.ts";
+	import { ref } from "vue";
+	const supermercadosSeleccionados = ref([]);
+	const enviar = defineEmits(["supermercadosSeleccionados"]);
+	const enviarSeleccion = () => {
+		enviar("supermercadosSeleccionados", supermercadosSeleccionados.value);
+	};
+</script>

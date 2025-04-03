@@ -1,13 +1,13 @@
 // src/services/productService.ts
-export const fetchProducts = async (product: string, supermarkets: string[]): Promise<any> => {
+export const fetchProducts = async (producto: string, supermercados: string[]): Promise<any> => {
     const queryParams = new URLSearchParams({
-        product,
-        supermarkets: supermarkets.join(",")||"coto",
+        producto,
+        supermercados: supermercados.join(",")||"coto",
     });
 
     try {
-        console.log(queryParams.toString());
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/search?${queryParams.toString()}`, {
+        console.log(`${process.env.NEXT_PUBLIC_API_URL}/buscar?${queryParams.toString()}`);
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/buscar?${queryParams.toString()}`, {
             method: 'GET',
         });
 

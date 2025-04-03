@@ -8,13 +8,14 @@ export const useProductSearch = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
 
-    const searchProducts = async (product: string, supermarkets: string[]) => {
+    const searchProducts = async (producto: string, supermercado: string[]) => {
         setLoading(true);
         setError(null);
         try {
-            const results = await fetchProducts(product, supermarkets);
+            const results = await fetchProducts(producto, supermercado);
             setProducts(results);
         } catch (err) {
+            console.error(err)
             setError('Error al cargar los productos.');
         } finally {
             setLoading(false);
