@@ -1,57 +1,52 @@
 // @prettier
 import { defineStore } from 'pinia';
 import { Producto } from '../types/producto.ts';
-// import supermercados  from '../data/supermercados.ts';
+// import { supermercado } from "../types/supermercado.ts";
 
 export const useProductosStore = defineStore('productos', {
-  state: () => ({ productos: [] as Producto[], orden: false }),
+  state: () => ({ productos: [] as Producto[], productosAPI: [] as Producto[], orden: { parametro: 'precio' as keyof Producto, ascendente: true as boolean} }),
   getters: {
-    obtenerOrdenados: (state) => (parametro: keyof Producto) => {
-      return state.productos.sort((a, b) => {
-        const aParam = (a[parametro] ?? a.precioDescuento);
-        const bParam = (b[parametro] ?? b.precioDescuento);
-
-        if (!a[parametro]) return 1;
-        if (!b[parametro]) return -1;
-
-        return (state.orden ? (aParam < bParam) ? -1 : 1 : (aParam < bParam) ? 1 : -1);
-      });
-    }
+    cargarProductos: (state) => state.productos,
   },
   actions: {
-    agregarProducto(producto: Producto) {
-      this.productos.push(producto);
+    filtrarPorProducto(nombre: string) {
+      // console.log('Filtrando por producto: ', nombre);
+      const productosFiltrados = this.productosAPI.filter((producto: Producto) => producto.titulo.toLowerCase().includes(nombre.toLowerCase()))
+      this.productos = productosFiltrados.length 
+      ? productosFiltrados
+      : this.productosAPI;
+      console.log('Filtrando por producto: ', nombre, 'Cantidad filtrados: ', this.productos.length);
+    },
+    filtrarPorSupermercado(nombre: string) {
+      console.log('Filtrando por supermercado: ', nombre);
+      this.productos = this.productosAPI.filter((producto: Producto) => producto.supermercado === nombre);
     },
     agregarProductos(productos: Producto[]) {
-      this.productos = [];
-      this.productos.push(...productos);
+      this.productosAPI = [];
+      this.productosAPI.push(...productos);
+      this.productos = this.productosAPI;
+      this.ordenar();
     },
     limpiarProductos() {
-      this.productos = [];
+      this.productosAPI = [];
     },
-    cambiarOrden() {
-      this.orden = !this.orden;
+    cambiarOrden(parametro: keyof Producto, ascendente: boolean) {
+      this.orden.parametro = parametro;
+      this.orden.ascendente = ascendente;
+      this.ordenar();
     },
-    // aplicarDescuento() {
-    //   this.productos = this.productos.map((producto) => {
-    //     const descuento = supermercados.find((supermercado) => supermercado.nombre === producto.supermercado)?.descuento || 0;
-    //     if (descuento !== 0) {
-    //       producto.precioDescuento = producto.precio * descuento;
-    //     }
-    //     return producto;
-    //   });
-    //   console.log('Descuentos aplicados a los productos:', this.productos);
-    // }
+    ordenar() {
+      const param: keyof Producto = this.orden.parametro;
+      const orden = this.orden.ascendente;
+      if (this.productos.length === 0) return;
+      console.log('Ordenando productos por:', param, 'Orden:', orden);
+      this.productos.sort((a: Producto, b: Producto) => {
+        const aParam = (a[param] ?? a.precio);
+        const bParam = (b[param] ?? b.precio);
+        if (!aParam) return 1;
+        if (!bParam) return -1;
+        return (orden ? (aParam < bParam) ? -1 : 1 : (aParam < bParam) ? 1 : -1);
+      });
+    },
   }
 })
-
-// export const useBusquedaStore = defineStore('busqueda', {
-//   state: () => ({ busqueda: [] as string[] }),
-//   getters: {
-//     obtenerBusqueda: (state) => state.busqueda
-//   },
-//   actions: {
-//     cambiarBusqueda(busqueda: string) {
-//     }
-//   }
-// })

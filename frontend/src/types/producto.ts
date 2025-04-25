@@ -5,7 +5,8 @@ export interface Producto {
     busqueda: string;
     titulo: string;
     precio: number;
-    unidad?: [string, number];
+    unidad?: string;
+    precioUnidad?: number;
     imagen: string;
     enlace: string;
     precioDescuento: number;

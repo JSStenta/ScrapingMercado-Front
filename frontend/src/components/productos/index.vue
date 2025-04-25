@@ -10,8 +10,10 @@
 </script>
 
 <template>
-	<table>
+	<table v-if="productos.length > 0">
 		<caption>
+			<h1 class="text-3xl font-bold text-blue-500">Productos</h1>
+
 			Cantidad de productos encontrados:
 			{{
 				productos.length

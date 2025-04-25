@@ -3,13 +3,18 @@
 	<header>
 		<h1>Comparador de precios</h1>
 		<form class="FormularioBusqueda" @submit.prevent="busquedaProducto">
-			<input type="text" v-model="consulta" placeholder="Buscar producto..." />
+			<input
+				type="text"
+				v-model="consulta"
+				@input="filtrarBusqueda"
+				placeholder="Buscar producto..."
+			/>
+			<label v-if="productosStore.productos.length > 0" for="FormularioBusqueda">Escribir para refinar la busqueda...</label>
 			<CheckboxSupermercados @supermercadosSeleccionados="supermercados" />
+			{{ supermercadosSeleccionados }}
+			<Orden />
 			<button type="submit">Buscar</button>
 		</form>
-		<div v-if="supermercadosSeleccionados.length > 0">
-			{{ supermercadosSeleccionados }}
-		</div>
 	</header>
 </template>
 
@@ -17,39 +22,38 @@
 	import { ref } from "vue";
 	import { buscarProductos } from "@/services/api";
 	import CheckboxSupermercados from "./formulario/supermercados";
+	import Orden from "./formulario/orden";
 	import { useProductosStore } from "@/store/productos";
 
 	// Usamos reactive para el arreglo supermercados
 	const consulta = ref("");
-	const supermercadosSeleccionados = ref([]); // Array de supermercados seleccionados
-	// const enviar = defineEmits(["productos"]);
+	const supermercadosSeleccionados = ref([]);
+	const productosStore = useProductosStore();
 
 	const supermercados = (seleccionados) => {
 		supermercadosSeleccionados.value = seleccionados;
 	};
-	// Función para realizar la búsqueda
 
+	const filtrarBusqueda = () => {
+		productosStore.filtrarPorProducto(consulta.value);
+	};
+
+	// Función para realizar la búsqueda
 	const busquedaProducto = async () => {
 		if (!consulta.value) {
 			alert("Por favor, ingresa un producto para buscar.");
 			return;
 		}
-
 		if (!supermercadosSeleccionados.value.length) {
 			alert("Por favor, selecciona al menos un supermercado.");
 			return;
 		}
 
 		// Realizar la consulta con los supermercados seleccionados
-		const productosStore = useProductosStore();
-		const productos = await buscarProductos(consulta.value, supermercadosSeleccionados.value);
-		// productosStore.limpiarProductos(); // Limpiar productos antes de agregar nuevos
+		const productos = await buscarProductos(
+			consulta.value,
+			supermercadosSeleccionados.value
+		);
 		productosStore.agregarProductos(productos);
 	};
-
-	import { watch } from "vue";
-
-	watch(supermercadosSeleccionados, (newSelection) => {
-		console.log("Supermercados seleccionados:", newSelection);
-	});
 </script>
